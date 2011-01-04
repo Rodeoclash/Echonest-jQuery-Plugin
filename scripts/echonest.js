@@ -5,6 +5,10 @@
 	 */
 	function EchoNest(apiKey, options) {
 		
+		function missingJQueryTemplates() {
+			( $.tmpl === null || $.tmpl === undefined )
+		}
+		
 		if( !apiKey ) { throw new Error('You must supply an API key to use the API!'); }
 		
 		var _en = this;
@@ -18,14 +22,11 @@
 		
 		// merge options
 
+		// interface to the EchoNest object
 		this.artist = function(name) {
 			if( !name ) { throw new Error('You must supply a name for the artist!'); }
 			return new Artist(name);
 		};
-		
-		function missingJQueryTemplates() {
-			( $.tmpl === null || $.tmpl === undefined )
-		}
 		
 		/**
 		 * Used to handle a response back from the api. Will throw errors if a problem is detected.
@@ -103,49 +104,73 @@
 
 			/**
 			 * Get all images associated with this artist.
-			 * @returns An array of image objects
+			 * @returns An ImageCollection object
 			 */
 			Artist.prototype.images = function(callback, options) {
 				var	request = new Request(),
 						options = $.extend({}, options, {name: this.name});
+						
 				request.get(this.endPoint + 'images', options, function(response) {
 					callback( new ImageCollection( response.getData() ) );
 				});
 			}
 			
+			/**
+			 * Get all audio associated with this artist.
+			 * @returns An AudioCollection object.
+			 */
+			Artist.prototype.audio = function(callback, options) {
+				var request = new Request(),
+						options = $.extend({}, options, {name: this.name});
+
+				request.get(this.endPoint + 'audio', options, function(response) {
+					callback( new AudioCollection( response.getData() ) );
+				});
+			}
+		
 		/**
-		 * Used to interact with a collection of image objects
+		 * Base class used for collections in the API.
+		 */
+		var Collection = function() {
+			
+		};
+		
+		/**
+		 * Getter for the data stored in the collection.
+		 * @returns Array Data stored on the collection.
+		 */
+			Collection.prototype.getData = function() {
+				return this.data[this.name];
+			}
+		
+			/**
+			 * Used to interact with a collection of images
+			 * @returns String Formatted according to the template passed in.
+			 */
+			Collection.prototype.to_html = function(template) {
+				if( missingJQueryTemplates() ) { throw new Error('jQuery templates must be installed to convert a collection to html') }
+				return $.tmpl( template, this.getData() );
+			}
+		
+		/**
+		 * Used to interact with a collection of audio objects
+		 * Inherits from Collection
+		 */
+		var AudioCollection = function(data) {
+			this.data = data;
+			this.name = "audio";
+		};
+		AudioCollection.prototype = new Collection(); AudioCollection.prototype.constructor = AudioCollection;
+		
+		/**
+		 * Used to interact with a collection of images
+		 * Inherits from Collection
 		 */
 		var ImageCollection = function(data) {
 			this.data = data;
+			this.name = "images";
 		};
-		
-			/**
-			 * Directly access the image hashes. This is useful for direct looping when one of the helper functions is not enough.
-			 */
-			ImageCollection.prototype.images = function() {
-				return this.data.images;
-			}
-			
-			/**
-			 * Returns an array of image paths.
-			 */
-			ImageCollection.prototype.to_a = function() {
-				var toReturn = [];
-				$.each( this.data.images, function(count, image) {
-					toReturn.push(image.url);
-				});
-				return toReturn;
-			}
-			
-			/**
-			 * Returns an html string based on the supplied jQuery template.
-			*/
-			ImageCollection.prototype.to_html = function(template) {
-				console.log( this.images() );
-				if( missingJQueryTemplates() ) { throw new Error('jQuery templates must be installed to convert an image collection to html') }
-				return $.tmpl( template, this.images() );
-			}
+		ImageCollection.prototype = new Collection(); ImageCollection.prototype.constructor = ImageCollection;
 		
 	}
 	
