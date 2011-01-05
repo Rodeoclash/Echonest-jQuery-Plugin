@@ -27,7 +27,7 @@
 		
 		// user settable options
 		this.options = {
-			
+			// none yet
 		};
 		$.extend(this.options, options);
 
@@ -58,6 +58,9 @@
 		 * Used to build a request to the API
 		 */
 		var Request = function() {
+
+			// merge any extended api details together
+			this.extendedDetails = $.extend.apply(true, arguments);
 			
 			function url() {
 				return _en.constants.endPoint + _en.constants.endPointVersion + "/";
@@ -78,7 +81,7 @@
 					api_key: apiKey()
 				};
 				
-				$.extend(data, options.extendedDetails); // merge in extended details, this allows customised calls
+				$.extend(data, this.extendedDetails); // merge in extended details, this allows customised calls
 				
 				return {
 					url: url() + options.endPoint,
@@ -87,20 +90,14 @@
 					data: data,
 					success: function(data, textStatus, XMLHttpRequest) {
 						if (options.success) { options.success(new Response(data)) }
-					},
-					error: function(XMLHttpRequest, textStatus, errorThrown) {
-						throw {
-							name: 'API Communication Error',
-							message: "Their was a problem communicating with the API. " + errorThrown
-						}
 					}
 				}
 			}
 			
 		};
 		
-			Request.prototype.get = function(endPoint, extendedDetails, callbackSuccess) {
-				$.ajax( this.settings({endPoint: endPoint, extendedDetails: extendedDetails, success: callbackSuccess, type: 'GET'}) );
+			Request.prototype.get = function(endPoint, callbackSuccess) {
+				$.ajax( this.settings({endPoint: endPoint, success: callbackSuccess, type: 'GET'}) );
 			}
 
 		/**
@@ -116,10 +113,8 @@
 			 * @returns An ImageCollection object
 			 */
 			Artist.prototype.images = function(callback, options) {
-				var	request = new Request(),
-						options = $.extend({}, options, {name: this.name});
-						
-				request.get(this.endPoint + 'images', options, function(response) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'images', function(response) {
 					callback( new ImageCollection( response.getData() ) );
 				});
 			}
@@ -129,10 +124,8 @@
 			 * @returns An AudioCollection object.
 			 */
 			Artist.prototype.audio = function(callback, options) {
-				var request = new Request(),
-						options = $.extend({}, options, {name: this.name});
-
-				request.get(this.endPoint + 'audio', options, function(response) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'audio', function(response) {
 					callback( new AudioCollection( response.getData() ) );
 				});
 			}
@@ -142,10 +135,8 @@
 			 * @returns An BiographyCollection object.
 			 */
 			Artist.prototype.biography = function(callback, options) {
-				var request = new Request(),
-						options = $.extend({}, options, {name: this.name});
-
-				request.get(this.endPoint + 'biographies', options, function(response) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'biographies', function(response) {
 					callback( new BiographyCollection( response.getData() ) );
 				});
 			}
@@ -180,8 +171,6 @@
 			 */
 			Collection.prototype.to_html = function(template) {
 				if( missingJQueryTemplates() ) { throw new Error('jQuery templates must be installed to convert a collection to html') }
-				console.log(this.getWorkingWith());
-				console.log( this.getData()[this.getWorkingWith()] );
 				return ( this.getWorkingWith() ) ? $.tmpl( template, this.getData()[this.getWorkingWith()] ) : $.tmpl( template, this.getData() )
 			}
 			
@@ -190,7 +179,7 @@
 			 * To go back to working with the full collection, set to any non integer value.
 			 * @returns String Formatted according to the template passed in.
 			 */
-			Collection.prototype.no = function(count) {
+			Collection.prototype.at = function(count) {
 				( isInteger(count) ) ? this.setWorkingWith(count) : this.setWorkingWith(null);
 				return this;
 			}

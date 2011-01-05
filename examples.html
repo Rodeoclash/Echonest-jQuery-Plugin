@@ -11,21 +11,26 @@
 			<script src="scripts/echonest.js" type="text/javascript"></script>
 
 			<script type="text/javascript">
-					var echonest = new EchoNest("KTY7T5L87IZ1OG2TM");
+					$(document).ready(function() {
+						
+						var echonest = new EchoNest("KTY7T5L87IZ1OG2TM");
 
-					// get a set of "Radiohead" artist images and output as a bunch of images to the page (limited to 5)
-					echonest.artist("Radiohead").images( function(imageCollection) {
-						$('#artistImages').append( imageCollection.to_html('<img src="${url}">') );
-					}, {results: 5});
-				
-					// get a set of "Hybrid" audio and output as HTML5 audio tags to the page
-					echonest.artist("Hybrid").audio( function(audioCollection) {
-						$("#artistAudio").append( audioCollection.to_html('<p>${artist} - ${length} long<br /><audio src="${url}" controls preload="none"></audio></p>') );
-					});
-					
-					// get the second Radiohead biography and output it onto the page
-					echonest.artist("ARH6W4X1187B99274F").biography( function(biographyCollection) {
-						$("#artistBiography").append( biographyCollection.no(1).to_html('<p>${text}</p>') );
+						// get a set of "Radiohead" artist images and output as a bunch of images to the page (limited to 5)
+						echonest.artist("Radiohead").images( function(imageCollection) {
+							$('#artistImages').append( imageCollection.to_html('<img src="${url}">') );
+						});
+
+						// get a set of "Hybrid" audio and output as HTML5 audio tags to the page
+						echonest.artist("Hybrid").audio( function(audioCollection) {
+							console.log('found');
+							$("#artistAudio").append( audioCollection.to_html('<p>${artist} - ${length} long<br /><audio src="${url}" controls preload="none"></audio></p>') );
+						});
+
+						// get the second Radiohead biography and output it onto the page
+						echonest.artist("ARH6W4X1187B99274F").biography( function(biographyCollection) {
+							$("#artistBiography").append( biographyCollection.at(1).to_html('<p>${text}</p>') );
+						});
+						
 					});
 					
 			</script>
