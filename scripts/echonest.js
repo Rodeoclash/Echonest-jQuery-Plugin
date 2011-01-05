@@ -9,6 +9,10 @@
 			( $.tmpl === null || $.tmpl === undefined )
 		}
 		
+		function isInteger(s){
+			return (s%(parseInt(s)/Number(s)))===0;
+		}
+		
 		if( !apiKey ) { throw new Error('You must supply an API key to use the API!'); }
 		
 		var _en = this;
@@ -82,7 +86,6 @@
 					type: options.type,
 					data: data,
 					success: function(data, textStatus, XMLHttpRequest) {
-						console.log('success');
 						if (options.success) { options.success(new Response(data)) }
 					},
 					error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -133,12 +136,25 @@
 					callback( new AudioCollection( response.getData() ) );
 				});
 			}
+			
+			/**
+			 * Get all biographies associated with this artist.
+			 * @returns An BiographyCollection object.
+			 */
+			Artist.prototype.biography = function(callback, options) {
+				var request = new Request(),
+						options = $.extend({}, options, {name: this.name});
+
+				request.get(this.endPoint + 'biographies', options, function(response) {
+					callback( new BiographyCollection( response.getData() ) );
+				});
+			}
 		
 		/**
 		 * Base class used for collections in the API.
 		 */
 		var Collection = function() {
-			
+			this.workingWith = null;
 		};
 		
 		/**
@@ -148,6 +164,15 @@
 			Collection.prototype.getData = function() {
 				return this.data[this.name];
 			}
+			
+			Collection.prototype.setWorkingWith = function(count) {
+				this.workingWith = count;
+				return this.workingWith;
+			}
+			
+			Collection.prototype.getWorkingWith = function(count) {
+				return this.workingWith;
+			}
 		
 			/**
 			 * Used to interact with a collection of images
@@ -155,7 +180,19 @@
 			 */
 			Collection.prototype.to_html = function(template) {
 				if( missingJQueryTemplates() ) { throw new Error('jQuery templates must be installed to convert a collection to html') }
-				return $.tmpl( template, this.getData() );
+				console.log(this.getWorkingWith());
+				console.log( this.getData()[this.getWorkingWith()] );
+				return ( this.getWorkingWith() ) ? $.tmpl( template, this.getData()[this.getWorkingWith()] ) : $.tmpl( template, this.getData() )
+			}
+			
+			/**
+			 * Set a specific item in the collection to work with. Setting this will make the collection always work with that item until set again.
+			 * To go back to working with the full collection, set to any non integer value.
+			 * @returns String Formatted according to the template passed in.
+			 */
+			Collection.prototype.no = function(count) {
+				( isInteger(count) ) ? this.setWorkingWith(count) : this.setWorkingWith(null);
+				return this;
 			}
 		
 		/**
@@ -177,6 +214,16 @@
 			this.name = "images";
 		};
 		ImageCollection.prototype = new Collection(); ImageCollection.prototype.constructor = ImageCollection;
+		
+		/**
+		 * Used to interact with a collection of biographies
+		 * Inherits from Collection
+		 */
+		var BiographyCollection = function(data) {
+			this.data = data;
+			this.name = "biographies";
+		};
+		BiographyCollection.prototype = new Collection(); BiographyCollection.prototype.constructor = BiographyCollection;
 		
 	}
 	

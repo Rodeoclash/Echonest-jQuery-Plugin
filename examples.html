@@ -23,11 +23,19 @@
 						$("#artistAudio").append( audioCollection.to_html('<p>${artist} - ${length} long<br /><audio src="${url}" controls preload="none"></audio></p>') );
 					});
 					
+					// get the second Radiohead biography and output it onto the page
+					echonest.artist("ARH6W4X1187B99274F").biography( function(biographyCollection) {
+						$("#artistBiography").append( biographyCollection.no(1).to_html('<p>${text}</p>') );
+					});
+					
 			</script>
 		
 	</head>
 
 	<body>
+		
+		<h2>Artist Biography (Radiohead)</h2>
+		<div id="artistBiography"></div>
 		
 		<h2>Artist Audio (Hybrid)</h2>
 		<div id="artistAudio"></div>
