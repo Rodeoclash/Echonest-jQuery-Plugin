@@ -13,10 +13,10 @@
 			<script type="text/javascript">
 					var echonest = new EchoNest("KTY7T5L87IZ1OG2TM");
 
-					// get a set of "Radiohead" artist images and output as a bunch of images to the page
+					// get a set of "Radiohead" artist images and output as a bunch of images to the page (limited to 5)
 					echonest.artist("Radiohead").images( function(imageCollection) {
 						$('#artistImages').append( imageCollection.to_html('<img src="${url}">') );
-					});
+					}, {results: 5});
 				
 					// get a set of "Hybrid" audio and output as HTML5 audio tags to the page
 					echonest.artist("Hybrid").audio( function(audioCollection) {

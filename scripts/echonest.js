@@ -14,13 +14,18 @@
 		var _en = this;
 		this.apiKey = apiKey;
 		
-		this.defaultOptions = {
+		// constants
+		this.constants = {
 			endPoint: "http://developer.echonest.com/api/",
 			endPointVersion: 'v4',
 			format: 'jsonp'
 		};
 		
-		// merge options
+		// user settable options
+		this.options = {
+			
+		};
+		$.extend(this.options, options);
 
 		// interface to the EchoNest object
 		this.artist = function(name) {
@@ -51,11 +56,11 @@
 		var Request = function() {
 			
 			function url() {
-				return _en.defaultOptions.endPoint + _en.defaultOptions.endPointVersion + "/";
+				return _en.constants.endPoint + _en.constants.endPointVersion + "/";
 			}
 			
 			function format() {
-				return _en.defaultOptions.format
+				return _en.constants.format
 			}
 			
 			function apiKey() {
