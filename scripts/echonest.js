@@ -17,7 +17,7 @@
 		this.defaultOptions = {
 			endPoint: "http://developer.echonest.com/api/",
 			endPointVersion: 'v4',
-			format: 'JSON'
+			format: 'jsonp'
 		};
 		
 		// merge options
@@ -32,7 +32,7 @@
 		 * Used to handle a response back from the api. Will throw errors if a problem is detected.
 		 */
 		var Response = function(data) {
-			this.data = eval( "(" + data + ")" ); // the paranthesis avoid a JS invalid label error
+			this.data = data;
 			if(this.data.status && this.data.status.code && this.data.status.code != 0) {
 				throw {
 					name: 'API Response Error',
@@ -73,10 +73,11 @@
 				
 				return {
 					url: url() + options.endPoint,
-					dataType: 'text',
+					dataType: 'jsonp',
 					type: options.type,
 					data: data,
 					success: function(data, textStatus, XMLHttpRequest) {
+						console.log('success');
 						if (options.success) { options.success(new Response(data)) }
 					},
 					error: function(XMLHttpRequest, textStatus, errorThrown) {
