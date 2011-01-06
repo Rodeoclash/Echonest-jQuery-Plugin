@@ -63,11 +63,8 @@
 		 */
 		var Response = function(data) {
 			this.data = data;
-			if(this.data.status && this.data.status.code && this.data.status.code != 0) {
-				throw {
-					name: 'API Response Error',
-					message: this.data.status.message
-				}
+			if(this.data.response.status.code != 0) {
+				throw new Error(this.data.response.status.message);
 			}
 		};
 		
@@ -163,13 +160,24 @@
 			}
 			
 			/**
-			 * Get all biographies associated with this artist.
+			 * Get the familiarity of this artist.
 			 * @returns An BiographyCollection object.
 			 */
 			Artist.prototype.familiarity = function(callback, options) {
 				var request = new Request(options, {name: this.name});
 				request.get(this.endPoint + 'familiarity', function(response) {
 					callback( new Familiarity( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get the hotttnesss of this artist
+			 * @returns An BiographyCollection object.
+			 */
+			Artist.prototype.hotttnesss = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'hotttnesss', function(response) {
+					callback( new Hotttnesss( response.getData() ) );
 				});
 			}
 			
@@ -312,6 +320,12 @@
 			this.name = "artist";
 		};
 		Familiarity.prototype = new Singular(); Familiarity.prototype.constructor = Familiarity;
+		
+		var Hotttnesss = function(data) {
+			this.data = data;
+			this.name = "artist";
+		};
+		Hotttnesss.prototype = new Singular(); Hotttnesss.prototype.constructor = Hotttnesss;
 		
 		/**
 		 * Used to interact with a collection of images
