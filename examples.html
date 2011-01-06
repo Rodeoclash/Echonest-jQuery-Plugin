@@ -32,6 +32,11 @@
 							$("#artistBlogs .started_at").append( blogCollection.start() );
 							$("#artistBlogs .size").append( blogCollection.size() );
 						});
+						
+						// how well do people know Trentemøller?
+						echonest.artist("Trentemøller").familiarity( function(familiarity) {
+							$('#artistFamiliarity').append( familiarity.to_html('<p>"${familiarity}"</p>') );
+						});
 
 						// get a set of "Radiohead" artist images and output as a bunch of images to the page (limited to first five results)
 						echonest.artist("Radiohead").images( function(imageCollection) {
@@ -54,6 +59,9 @@
 		
 		<h2>Artist Blogs (Booka Shade)</h2>
 		<div id="artistBlogs"></div>
+		
+		<h2>Artist Familiarity (Trentemøller)</h2>
+		<div id="artistFamiliarity"></div>
 		
 		<h2>Artist Images (Radiohead)</h2>
 		<div id="artistImages"></div>

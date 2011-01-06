@@ -130,17 +130,6 @@
 		};
 
 			/**
-			 * Get all images associated with this artist.
-			 * @returns An ImageCollection object
-			 */
-			Artist.prototype.images = function(callback, options) {
-				var request = new Request(options, {name: this.name});
-				request.get(this.endPoint + 'images', function(response) {
-					callback( new ImageCollection( response.getData() ) );
-				});
-			}
-			
-			/**
 			 * Get all audio associated with this artist.
 			 * @returns An AudioCollection object.
 			 */
@@ -172,18 +161,59 @@
 					callback( new BlogCollection( response.getData() ) );
 				});
 			}
+			
+			/**
+			 * Get all biographies associated with this artist.
+			 * @returns An BiographyCollection object.
+			 */
+			Artist.prototype.familiarity = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'familiarity', function(response) {
+					callback( new Familiarity( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get all images associated with this artist.
+			 * @returns An ImageCollection object
+			 */
+			Artist.prototype.images = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'images', function(response) {
+					callback( new ImageCollection( response.getData() ) );
+				});
+			}
 		
 		/**
-		 * Base class used for collections in the API.
+		 * Base class used for singular items returned from the API.
+		 */
+		var Singular = function() {
+		}
+		
+			/**
+			 * Getter for the data stored in the singular.
+			 * @returns Array Hash of data
+			 */
+			Singular.prototype.getData = function() {
+				return this.data[this.name]
+			}
+		
+			Singular.prototype.to_html = function(template) {
+				if( missingJQueryTemplates() ) { throw new Error('jQuery templates must be installed to convert a collection to html') }
+				return $.tmpl( template, this.getData() )
+			}
+		
+		/**
+		 * Base class used for collections returned from the API.
 		 */
 		var Collection = function() {
-			this.workingWith = null;
+			this.workingWith = null; // used if we want to work with a singular item out of the collection.
 		};
 		
-		/**
-		 * Getter for the data stored in the collection. If working with is set, return only that record.
-		 * @returns Array Data stored on the collection.
-		 */
+			/**
+			 * Getter for the data stored in the collection. If working with is set, return only that record.
+			 * @returns Array Data stored on the collection.
+			 */
 			Collection.prototype.getData = function() {
 				return ( this.getWorkingWith() ) ? this.data[this.name][this.getWorkingWith()] : this.data[this.name]
 			}
@@ -251,14 +281,14 @@
 		AudioCollection.prototype = new Collection(); AudioCollection.prototype.constructor = AudioCollection;
 		
 		/**
-		 * Used to interact with a collection of images
+		 * Used to interact with a collection of blogs
 		 * Inherits from Collection
 		 */
-		var ImageCollection = function(data) {
+		var BlogCollection = function(data) {
 			this.data = data;
-			this.name = "images";
+			this.name = "blogs";
 		};
-		ImageCollection.prototype = new Collection(); ImageCollection.prototype.constructor = ImageCollection;
+		BlogCollection.prototype = new Collection(); BlogCollection.prototype.constructor = BlogCollection;
 		
 		/**
 		 * Used to interact with a collection of biographies
@@ -277,11 +307,21 @@
 		};
 		BiographyCollection.prototype = new Collection(); BiographyCollection.prototype.constructor = BiographyCollection;
 		
-		var BlogCollection = function(data) {
+		var Familiarity = function(data) {
 			this.data = data;
-			this.name = "blogs";
+			this.name = "artist";
 		};
-		BlogCollection.prototype = new Collection(); BlogCollection.prototype.constructor = BlogCollection;
+		Familiarity.prototype = new Singular(); Familiarity.prototype.constructor = Familiarity;
+		
+		/**
+		 * Used to interact with a collection of images
+		 * Inherits from Collection
+		 */
+		var ImageCollection = function(data) {
+			this.data = data;
+			this.name = "images";
+		};
+		ImageCollection.prototype = new Collection(); ImageCollection.prototype.constructor = ImageCollection;
 		
 	}
 	
