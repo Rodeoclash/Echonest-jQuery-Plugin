@@ -191,6 +191,39 @@
 					callback( new ImageCollection( response.getData() ) );
 				});
 			}
+			
+			/**
+			 * Get the new about an artist
+			 * @returns An BiographyCollection object.
+			 */
+			Artist.prototype.news = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'news', function(response) {
+					callback( new NewsCollection( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get the new about an artist
+			 * @returns An BiographyCollection object.
+			 */
+			Artist.prototype.profile = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'profile', function(response) {
+					callback( new Profile( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get reviews about an artist
+			 * @returns An BiographyCollection object.
+			 */
+			Artist.prototype.reviews = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'reviews', function(response) {
+					callback( new ReviewsCollection( response.getData() ) );
+				});
+			}
 		
 		/**
 		 * Base class used for singular items returned from the API.
@@ -265,6 +298,7 @@
 			 */
 			Collection.prototype.to_html = function(template) {
 				if( missingJQueryTemplates() ) { throw new Error('jQuery templates must be installed to convert a collection to html') }
+				if( this.size() < 1 ) { throw new RangeError('Empty collection') }
 				return $.tmpl( template, this.getData() )
 			}
 			
@@ -315,12 +349,20 @@
 		};
 		BiographyCollection.prototype = new Collection(); BiographyCollection.prototype.constructor = BiographyCollection;
 		
+		/**
+		 * Familiarity information about an artist
+		 * Inherits from Singular
+		 */
 		var Familiarity = function(data) {
 			this.data = data;
 			this.name = "artist";
 		};
 		Familiarity.prototype = new Singular(); Familiarity.prototype.constructor = Familiarity;
 		
+		/**
+		 * Hotttnesss information about an artist
+		 * Inherits from Singular
+		 */
 		var Hotttnesss = function(data) {
 			this.data = data;
 			this.name = "artist";
@@ -336,6 +378,37 @@
 			this.name = "images";
 		};
 		ImageCollection.prototype = new Collection(); ImageCollection.prototype.constructor = ImageCollection;
+		
+		/**
+		 * Used to interact with a collection of news
+		 * Inherits from Collection
+		 */
+		var NewsCollection = function(data) {
+			this.data = data;
+			this.name = "news";
+		};
+		NewsCollection.prototype = new Collection(); NewsCollection.prototype.constructor = NewsCollection;
+		
+		/**
+		 * Profile information about an artist
+		 * Inherits from Singular
+		 */
+		var Profile = function(data) {
+			this.data = data;
+			this.name = "artist";
+			//this.data[this.name] = flatten_json(this.data[this.name]); // this should need flattening but endpoint doesn't seem to be returning all results??
+		};
+		Profile.prototype = new Singular(); Profile.prototype.constructor = Profile;
+		
+		/**
+		 * Used to interact with a collection of reviews
+		 * Inherits from Collection
+		 */
+		var ReviewsCollection = function(data) {
+			this.data = data;
+			this.name = "reviews";
+		};
+		ReviewsCollection.prototype = new Collection(); ReviewsCollection.prototype.constructor = ReviewsCollection;
 		
 	}
 	

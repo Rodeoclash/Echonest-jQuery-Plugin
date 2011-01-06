@@ -38,7 +38,7 @@
 							$('#artistFamiliarity').append( familiarity.to_html('<p>"${familiarity}"</p>') );
 						});
 						
-						// how hot is The Glitch Mob?
+						// how hot are The Glitch Mob?
 						echonest.artist("The Glitch Mob").hotttnesss( function(hotttnesss) {
 							$('#artistHotttnesss').append( hotttnesss.to_html('<p>"${hotttnesss}"</p>') );
 						});
@@ -48,6 +48,21 @@
 							$('#artistImages').append( imageCollection.to_html('<img src="${url}">') );
 						}, {results: 5});
 						
+						// catching up with Depeche Mode (a.k.a what's news)
+						echonest.artist("Depeche Mode").news( function(newsCollection) {
+							$('#artistNews').append( newsCollection.to_html('<p>${summary}<br/><strong>Posted on:</strong> ${date_posted}</p>') );
+						});
+						
+						// get a profile on The Cure, including artist id and foreign catalog id
+						echonest.artist("The Cure").profile( function(profile) {
+							$('#artistProfile').append( profile.to_html('<dl><dt>Artist Id</dt><dd>${id}</dd><dt>Foreign Catalog Id</dt><dd>${foreign_ids_catalog}</dd></dl>') );
+						});
+						
+						// get reviews about Kei$ha
+						echonest.artist("Radiohead").reviews( function(reviewCollection) {
+							$('#artistReviews').append( reviewCollection.to_html('<p>${summary}</p>') );
+						});
+						
 					});
 					
 			</script>
@@ -56,23 +71,38 @@
 
 	<body>
 		
-		<h2>Artist Audio (Hybrid)</h2>
+		<h1>EchoNest JavaScript API Examples</h1>
+		<p>A set of examples for interacting with the EchoNest API</p>
+		
+		<h2>Artist Endpoint</h2>
+		
+		<h3>Audio (Hybrid)</h3>
 		<div id="artistAudio"></div>		
 		
-		<h2>Artist Biography (Radiohead)</h2>
+		<h3>Biography (Radiohead)</h3>
 		<div id="artistBiography"></div>
 		
-		<h2>Artist Blogs (Booka Shade)</h2>
+		<h3>Blogs (Booka Shade)</h3>
 		<div id="artistBlogs"></div>
 		
-		<h2>Artist Familiarity (Trentemøller)</h2>
+		<h3>Familiarity (Trentemøller)</h3>
 		<div id="artistFamiliarity"></div>
 		
-		<h2>Artist Hotttnesss (The Glitch Mob)</h2>
+		<h3>Hotttnesss (The Glitch Mob)</h3>
 		<div id="artistHotttnesss"></div>
 		
-		<h2>Artist Images (Radiohead)</h2>
+		<h3>Images (Radiohead)</h3>
 		<div id="artistImages"></div>
+		
+		<h3>News (Depeche Mode)</h3>
+		<div id="artistNews"></div>
+		
+		<h3>Profile (The Cure)</h3>
+		<p><strong>Seems to be a bug with this endpoint, is not returning foreign ids as specified in the API docs?</strong></p>
+		<div id="artistProfile"></div>
+		
+		<h3>Reviews (Radiohead)</h3>
+		<div id="artistReviews"></div>
 		
 	</body>
 	
