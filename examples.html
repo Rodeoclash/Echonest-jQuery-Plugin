@@ -74,6 +74,43 @@
 							$('#artistSearchResults').append( searchResultsCollection.to_html('${name} - <strong>${foreign_ids_0_foreign_id}</strong><br/>') );
 						}, searchOptions);
 						
+						// what songs did Depeche Mode write?
+						echonest.artist("Depeche Mode").songs( function(songsCollection) {
+							$('#artistSongs').append( songsCollection.to_html('${id} - ${title}<br/>') );
+						});
+						
+						
+						// which artists are similar to Muse?
+						echonest.artist("Muse").similar( function(similarCollection) {
+							$('#artistSimilar').append( similarCollection.to_html('${name} - ${id}<br/>') );
+						});
+						
+						
+						// what terms are used to descript the artist David Bowie?
+						echonest.artist("David Bowie").terms( function(termsCollection) {
+							$('#artistTerms').append( termsCollection.to_html('<strong>${name}</strong> - ${frequency}<br/>') );
+						});
+						
+						// what artists are currently "hottt"? (this should return a hotttnesss value but doesn't)
+						echonest.artist().top_hottt( function(topHotttCollection) {
+							$('#artistTopHottt').append( topHotttCollection.to_html('<strong>${name}</strong> - ${hotttnesss}<br/>') );
+						});
+						
+						// what artists are currently "hottt"? (this should return a hotttnesss value but doesn't)
+						echonest.artist().top_terms( function(topTermsCollection) {
+							$('#artistTopTerms').append( topTermsCollection.to_html('<strong>${name}</strong> - ${frequency}<br/>') );
+						});
+						
+						// give me the amazon.com link for Pink Floyd
+						echonest.artist("Pink Floyd").urls( function(urlsCollection) {
+							$('#artistUrls').append( urlsCollection.to_html('<a href="${amazon_url}">${amazon_url}</a>') );
+						});
+						
+						// give me videos featuring Calexico
+						echonest.artist("Calexico").video( function(videoCollection) {
+							$('#artistVideos').append( videoCollection.to_html('${title} (${site} : ${url})<br/>') );
+						});
+						
 					});
 					
 			</script>
@@ -87,36 +124,56 @@
 		
 		<h2>Artist Endpoint</h2>
 		
-		<h3>Audio (Hybrid)</h3>
+		<h3>Audio of "Hybrid"</h3>
 		<div id="artistAudio"></div>		
 		
-		<h3>Biography (Radiohead)</h3>
+		<h3>Biography of "Radiohead"</h3>
 		<div id="artistBiography"></div>
 		
-		<h3>Blogs (Booka Shade)</h3>
+		<h3>Blog Posts About "Booka Shade"</h3>
 		<div id="artistBlogs"></div>
 		
-		<h3>Familiarity (Trentemøller)</h3>
+		<h3>Peoples Familiarity of "Trentemøller"</h3>
 		<div id="artistFamiliarity"></div>
 		
-		<h3>Hotttnesss (The Glitch Mob)</h3>
+		<h3>"The Glitch Mob" Hotttnesss</h3>
 		<div id="artistHotttnesss"></div>
 		
-		<h3>Images (Radiohead)</h3>
+		<h3>Images of "Radiohead"</h3>
 		<div id="artistImages"></div>
 		
-		<h3>News (Depeche Mode)</h3>
+		<h3>News about "Depeche Mode"</h3>
 		<div id="artistNews"></div>
 		
-		<h3>Profile (The Cure)</h3>
-		<p><strong>Seems to be a bug with this endpoint, is not returning foreign ids as specified in the API docs?</strong></p>
+		<h3>Profile of "The Cure"</h3>
 		<div id="artistProfile"></div>
 		
-		<h3>Reviews (Radiohead)</h3>
+		<h3>Reviews of "Radiohead"</h3>
 		<div id="artistReviews"></div>
 		
-		<h3>Search Results</h3>
+		<h3>Search Results for "The"</h3>
 		<div id="artistSearchResults"></div>
+		
+		<h3>Songs by "Depeche Mode"</h3>
+		<div id="artistSongs"></div>
+		
+		<h3>Artists Similar to "Muse"</h3>
+		<div id="artistSimilar"></div>
+		
+		<h3>Terms Used to Describe "David Bowie"</h3>
+		<div id="artistTerms"></div>
+		
+		<h3>Current Top Hottt Artists</h3>
+		<div id="artistTopHottt"></div>
+		
+		<h3>Current Top Terms</h3>
+		<div id="artistTopTerms"></div>
+		
+		<h3>Amazon URL for "Pink Floyd"</h3>
+		<div id="artistUrls"></div>
+		
+		<h3>Videos for "Calexico"</h3>
+		<div id="artistVideos"></div>
 		
 	</body>
 	

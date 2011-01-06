@@ -127,7 +127,7 @@
 
 			/**
 			 * Get all audio associated with this artist.
-			 * @returns An AudioCollection object.
+			 * @returns A collection object.
 			 */
 			Artist.prototype.audio = function(callback, options) {
 				var request = new Request(options, {name: this.name});
@@ -138,7 +138,7 @@
 			
 			/**
 			 * Get all biographies associated with this artist.
-			 * @returns An BiographyCollection object.
+			 * @returns A collection object.
 			 */
 			Artist.prototype.biographies = function(callback, options) {
 				var request = new Request(options, {name: this.name});
@@ -149,7 +149,7 @@
 			
 			/**
 			 * Get all biographies associated with this artist.
-			 * @returns An BiographyCollection object.
+			 * @returns A collection object.
 			 */
 			Artist.prototype.blogs = function(callback, options) {
 				var request = new Request(options, {name: this.name});
@@ -160,7 +160,7 @@
 			
 			/**
 			 * Get the familiarity of this artist.
-			 * @returns An BiographyCollection object.
+			 * @returns AA collection object.
 			 */
 			Artist.prototype.familiarity = function(callback, options) {
 				var request = new Request(options, {name: this.name});
@@ -171,7 +171,7 @@
 			
 			/**
 			 * Get the hotttnesss of this artist
-			 * @returns An BiographyCollection object.
+			 * @returns A collection object.
 			 */
 			Artist.prototype.hotttnesss = function(callback, options) {
 				var request = new Request(options, {name: this.name});
@@ -182,7 +182,7 @@
 			
 			/**
 			 * Get all images associated with this artist.
-			 * @returns An ImageCollection object
+			 * @returns A collection object.
 			 */
 			Artist.prototype.images = function(callback, options) {
 				var request = new Request(options, {name: this.name});
@@ -193,7 +193,7 @@
 			
 			/**
 			 * Get the new about an artist
-			 * @returns An BiographyCollection object.
+			 * @returns A collection object.
 			 */
 			Artist.prototype.news = function(callback, options) {
 				var request = new Request(options, {name: this.name});
@@ -204,7 +204,7 @@
 			
 			/**
 			 * Get the new about an artist
-			 * @returns An BiographyCollection object.
+			 * @returns A collection object.
 			 */
 			Artist.prototype.profile = function(callback, options) {
 				var request = new Request(options, {name: this.name});
@@ -215,7 +215,7 @@
 			
 			/**
 			 * Get reviews about an artist
-			 * @returns An BiographyCollection object.
+			 * @returns A collection object.
 			 */
 			Artist.prototype.reviews = function(callback, options) {
 				var request = new Request(options, {name: this.name});
@@ -226,12 +226,89 @@
 			
 			/**
 			 * Get search results about an artist
-			 * @returns An BiographyCollection object.
+			 * @returns A collection object.
 			 */
 			Artist.prototype.search = function(callback, options) {
 				var request = new Request(options, {name: this.name});
 				request.get(this.endPoint + 'search', function(response) {
 					callback( new SearchResultsCollection( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get songs written by an artist
+			 * @returns A collection object.
+			 */
+			Artist.prototype.songs = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'songs', function(response) {
+					callback( new SongsCollection( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get similar artists to the one specified
+			 * @returns A collection object.
+			 */
+			Artist.prototype.similar = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'similar', function(response) {
+					callback( new SimilarCollection( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get terms used to describe an artist
+			 * @returns A collection object.
+			 */
+			Artist.prototype.terms = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'terms', function(response) {
+					callback( new TermsCollection( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get top "hottt" artists
+			 * @returns A collection object.
+			 */
+			Artist.prototype.top_hottt = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'top_hottt', function(response) {
+					callback( new TopHotttCollection( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get top terms
+			 * @returns A collection object.
+			 */
+			Artist.prototype.top_terms = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'top_terms', function(response) {
+					callback( new TopTermsCollection( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get top terms
+			 * @returns A collection object.
+			 */
+			Artist.prototype.urls = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'urls', function(response) {
+					callback( new UrlsCollection( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get videos for artist
+			 * @returns A collection object.
+			 */
+			Artist.prototype.video = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'video', function(response) {
+					callback( new VideoCollection( response.getData() ) );
 				});
 			}
 		
@@ -434,10 +511,85 @@
 				that.data[that.name][count] = flatten_json(item);
 			});
 			
-			console.log(this.data);
-			
 		};
 		SearchResultsCollection.prototype = new Collection(); SearchResultsCollection.prototype.constructor = SearchResultsCollection;
+		
+		/**
+		 * Used to interact with a collection of songs
+		 * Inherits from Collection
+		 */
+		var SongsCollection = function(data) {
+			this.data = data;
+			this.name = "songs";
+		};
+		SongsCollection.prototype = new Collection(); SongsCollection.prototype.constructor = SongsCollection;
+		
+		/**
+		 * Used to interact with a collection of artist similar to the one specified
+		 * Inherits from Collection
+		 */
+		var SimilarCollection = function(data) {
+			var that = this;
+			this.data = data;
+			this.name = "artists";
+			
+			// flatten the json so we have access to nested items from inside the template
+			$.each( this.data[this.name], function(count, item) {
+				that.data[that.name][count] = flatten_json(item);
+			});
+			
+		};
+		SimilarCollection.prototype = new Collection(); SimilarCollection.prototype.constructor = SimilarCollection;
+		
+		/**
+		 * Used to interact with a collection of terms
+		 * Inherits from Collection
+		 */
+		var TermsCollection = function(data) {
+			this.data = data;
+			this.name = "terms";
+		};
+		TermsCollection.prototype = new Collection(); TermsCollection.prototype.constructor = TermsCollection;
+		
+		/**
+		 * Used to interact with a collection of hottt artists
+		 * Inherits from Collection
+		 */
+		var TopHotttCollection = function(data) {
+			this.data = data;
+			this.name = "artists";
+		};
+		TopHotttCollection.prototype = new Collection(); TopHotttCollection.prototype.constructor = TopHotttCollection;
+		
+		/**
+		 * Used to interact with a collection of top terms
+		 * Inherits from Collection
+		 */
+		var TopTermsCollection = function(data) {
+			this.data = data;
+			this.name = "terms";
+		};
+		TopTermsCollection.prototype = new Collection(); TopTermsCollection.prototype.constructor = TopTermsCollection;
+		
+		/**
+		 * Used to interact with a collection of URLs for an artist
+		 * Inherits from Collection
+		 */
+		var UrlsCollection = function(data) {
+			this.data = data;
+			this.name = "urls";
+		};
+		UrlsCollection.prototype = new Collection(); UrlsCollection.prototype.constructor = UrlsCollection;
+		
+		/**
+		 * Used to interact with a collection of videos for an artist
+		 * Inherits from Collection
+		 */
+		var VideoCollection = function(data) {
+			this.data = data;
+			this.name = "video";
+		};
+		VideoCollection.prototype = new Collection(); VideoCollection.prototype.constructor = VideoCollection;
 		
 	}
 	
