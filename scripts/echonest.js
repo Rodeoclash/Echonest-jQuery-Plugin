@@ -13,6 +13,27 @@
 			return (s%(parseInt(s)/Number(s)))===0;
 		}
 		
+		// used to flatten nested json and preserve structure via keyname, this allows easy access to nested JSON values in jQuery templates
+		function flatten_json(obj, includePrototype, into, prefix) {
+			into = into || {};
+			prefix = prefix || "";
+
+			for (var k in obj) {
+				if (includePrototype || obj.hasOwnProperty(k)) {
+					var prop = obj[k];
+					if (prop && typeof prop === "object" &&
+						!(prop instanceof Date || prop instanceof RegExp)) {
+						flatten_json(prop, includePrototype, into, prefix + k + "_");
+					}
+					else {
+						into[prefix + k] = prop;
+					}
+				}
+			}
+			return into;
+		}
+
+		
 		if( !apiKey ) { throw new Error('You must supply an API key to use the API!'); }
 		
 		var _en = this;
@@ -134,10 +155,21 @@
 			 * Get all biographies associated with this artist.
 			 * @returns An BiographyCollection object.
 			 */
-			Artist.prototype.biography = function(callback, options) {
+			Artist.prototype.biographies = function(callback, options) {
 				var request = new Request(options, {name: this.name});
 				request.get(this.endPoint + 'biographies', function(response) {
 					callback( new BiographyCollection( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get all biographies associated with this artist.
+			 * @returns An BiographyCollection object.
+			 */
+			Artist.prototype.blogs = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'blogs', function(response) {
+					callback( new BlogCollection( response.getData() ) );
 				});
 			}
 		
@@ -149,11 +181,11 @@
 		};
 		
 		/**
-		 * Getter for the data stored in the collection.
+		 * Getter for the data stored in the collection. If working with is set, return only that record.
 		 * @returns Array Data stored on the collection.
 		 */
 			Collection.prototype.getData = function() {
-				return this.data[this.name];
+				return ( this.getWorkingWith() ) ? this.data[this.name][this.getWorkingWith()] : this.data[this.name]
 			}
 			
 			Collection.prototype.setWorkingWith = function(count) {
@@ -164,6 +196,30 @@
 			Collection.prototype.getWorkingWith = function(count) {
 				return this.workingWith;
 			}
+			
+			/**
+			 * Returns where results recieved from the server started from.
+			 * @returns Integer Start point
+			 */
+			Collection.prototype.start = function(count) {
+				return parseInt(this.data.start, 10);
+			}
+			
+			/**
+			 * Returns a total count for the collection on the server
+			 * @returns Integer Total results available on the server
+			 */
+			Collection.prototype.total = function(count) {
+				return parseInt(this.data.total, 10);
+			}
+			
+			/**
+			 * Returns the size of the collection
+			 * @returns Integer Number of items in the collection
+			 */
+			Collection.prototype.size = function(count) {
+				return this.getData().length;
+			}
 		
 			/**
 			 * Used to interact with a collection of images
@@ -171,7 +227,7 @@
 			 */
 			Collection.prototype.to_html = function(template) {
 				if( missingJQueryTemplates() ) { throw new Error('jQuery templates must be installed to convert a collection to html') }
-				return ( this.getWorkingWith() ) ? $.tmpl( template, this.getData()[this.getWorkingWith()] ) : $.tmpl( template, this.getData() )
+				return $.tmpl( template, this.getData() )
 			}
 			
 			/**
@@ -209,10 +265,23 @@
 		 * Inherits from Collection
 		 */
 		var BiographyCollection = function(data) {
+			var that = this;
 			this.data = data;
 			this.name = "biographies";
+			
+			// flatten the json so we have access to nested items from inside the template
+			$.each( this.data[this.name], function(count, item) {
+				that.data[that.name][count] = flatten_json(item);
+			});
+			
 		};
 		BiographyCollection.prototype = new Collection(); BiographyCollection.prototype.constructor = BiographyCollection;
+		
+		var BlogCollection = function(data) {
+			this.data = data;
+			this.name = "blogs";
+		};
+		BlogCollection.prototype = new Collection(); BlogCollection.prototype.constructor = BlogCollection;
 		
 	}
 	
