@@ -58,10 +58,21 @@
 							$('#artistProfile').append( profile.to_html('<dl><dt>Artist Id</dt><dd>${id}</dd><dt>Foreign Catalog Id</dt><dd>${foreign_ids_catalog}</dd></dl>') );
 						});
 						
-						// get reviews about Kei$ha
+						// get reviews about Radiohead
 						echonest.artist("Radiohead").reviews( function(reviewCollection) {
 							$('#artistReviews').append( reviewCollection.to_html('<p>${summary}</p>') );
 						});
+						
+						// perform an artist search using a search options hash
+						searchOptions = {
+							name: 'The',
+							fuzzy_match: true,
+							bucket: 'id:7digital'
+						};
+						
+						echonest.artist().search( function(searchResultsCollection) {
+							$('#artistSearchResults').append( searchResultsCollection.to_html('${name} - <strong>${foreign_ids_0_foreign_id}</strong><br/>') );
+						}, searchOptions);
 						
 					});
 					
@@ -103,6 +114,9 @@
 		
 		<h3>Reviews (Radiohead)</h3>
 		<div id="artistReviews"></div>
+		
+		<h3>Search Results</h3>
+		<div id="artistSearchResults"></div>
 		
 	</body>
 	

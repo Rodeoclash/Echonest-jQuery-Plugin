@@ -54,7 +54,6 @@
 
 		// interface to the EchoNest object
 		this.artist = function(name) {
-			if( !name ) { throw new Error('You must supply a name for the artist!'); }
 			return new Artist(name);
 		};
 		
@@ -222,6 +221,17 @@
 				var request = new Request(options, {name: this.name});
 				request.get(this.endPoint + 'reviews', function(response) {
 					callback( new ReviewsCollection( response.getData() ) );
+				});
+			}
+			
+			/**
+			 * Get search results about an artist
+			 * @returns An BiographyCollection object.
+			 */
+			Artist.prototype.search = function(callback, options) {
+				var request = new Request(options, {name: this.name});
+				request.get(this.endPoint + 'search', function(response) {
+					callback( new SearchResultsCollection( response.getData() ) );
 				});
 			}
 		
@@ -409,6 +419,25 @@
 			this.name = "reviews";
 		};
 		ReviewsCollection.prototype = new Collection(); ReviewsCollection.prototype.constructor = ReviewsCollection;
+		
+		/**
+		 * Used to interact with a collection of reviews
+		 * Inherits from Collection
+		 */
+		var SearchResultsCollection = function(data) {
+			var that = this;
+			this.data = data;
+			this.name = "artists";
+			
+			// flatten the json so we have access to nested items from inside the template
+			$.each( this.data[this.name], function(count, item) {
+				that.data[that.name][count] = flatten_json(item);
+			});
+			
+			console.log(this.data);
+			
+		};
+		SearchResultsCollection.prototype = new Collection(); SearchResultsCollection.prototype.constructor = SearchResultsCollection;
 		
 	}
 	
