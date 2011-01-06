@@ -1,1 +1,2 @@
 0.1 - Added support for getting artist images from the API.
+0.2 - Implemented all API functions for "Artists"
