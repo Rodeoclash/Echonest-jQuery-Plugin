@@ -20,6 +20,11 @@
 							$("#artistAudio").append( audioCollection.to_html('<p>${artist} - ${length} long<br /><audio src="${url}" controls preload="none"></audio></p>') );
 						});
 						
+						// get a single audio url
+						echonest.artist("Prince").audio( function(audioCollection) {
+							$('#artistAudioURL').append(audioCollection.data.audio[0].url);
+						});
+						
 						// get the second Radiohead biography by artist id and output it onto the page, also output the site it came from and the license used. Nested items are available through a prefix. E.g. "license_type"
 						echonest.artist("ARH6W4X1187B99274F").biographies( function(biographyCollection) {
 							$("#artistBiography").append( biographyCollection.at(1).to_html('<p>${text} <br/>by: <strong>${site} - <span class="license">${license_type}</span></strong></p>') );
@@ -125,7 +130,10 @@
 		<h2>Artist Endpoint</h2>
 		
 		<h3>Audio of "Hybrid"</h3>
-		<div id="artistAudio"></div>		
+		<div id="artistAudio"></div>
+		
+		<h3>URL to a Prince Song</h3>
+		<div id="artistAudioURL"></div>
 		
 		<h3>Biography of "Radiohead"</h3>
 		<div id="artistBiography"></div>
