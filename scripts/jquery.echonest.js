@@ -30,15 +30,15 @@
 			} else {
 				throw new Error('Either the jQuery template or Underscore template engines must be installed to convert a collection to html')
 			}
-			that.getTemplatingEngine = {
+			return {
 				name: name,
 				engine: engine
 			}
-			return that.getTemplatingEngine;
 		}
 		
 		// TODO: This should use proxy objects, implement once more templating engines are implemented
 		function toTemplate(template, data, options) {
+			console.log(data);
 			var engineDetails = that.getTemplatingEngine(), html;
 			
 			options = $.extend({},{start: 0}, options);
