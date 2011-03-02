@@ -49,13 +49,17 @@
 			}
 			
 			if( engineDetails.name === "jQuery" ) {
+				
 				html = engineDetails.engine( template, data );
+				
 			} else if ( engineDetails.name === "Underscore" ) {
 
 				// underscore templates don't support arrays, we must manually loop over the array and construct html
+				var compiled = engineDetails.engine(template);
 				$.each(data, function(count, item) {
-					html += engineDetails.engine( template, item );
+					html += compiled(item);
 				});
+				html = html.replace(/undefined/, ''); // TODO, why is this being inserted!?
 				
 			} else {
 				throw new Error('Could not determine engine type.');
