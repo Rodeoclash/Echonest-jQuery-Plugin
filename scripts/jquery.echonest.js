@@ -5,12 +5,34 @@
 	 */
 	function EchoNest(apiKey, options) {
 		
-		function missingJQueryTemplates() {
-			( $.tmpl === null || $.tmpl === undefined )
+		function hasJQueryTemplates() {
+			return (typeof $ === "function" && typeof $.tmpl === "function");
 		}
 		
-		function isInteger(s){
+		function hasUnderscoreTemplates() {
+			return (typeof _ === "function");
+		}
+		
+		function isInteger(s) {
 			return (s%(parseInt(s)/Number(s)))===0;
+		}
+		
+		function getTemplatingEngine() {
+			var engine;
+			if( hasJQueryTemplates() ) {
+				engine = $.tmpl;
+			} else if( hasUnderscoreTemplates() ) {
+				engine = _.template;
+			} else {
+				throw new Error('Either the jQuery template or Underscore template engines must be installed to convert a collection to html')
+			}
+			return engine;
+		}
+		
+		function toTemplate(template, data) {
+			var engine = getTemplatingEngine();
+			console.log(engine);
+			return engine( template, data );
 		}
 		
 		// used to flatten nested json and preserve structure via keyname, this allows easy access to nested JSON values in jQuery templates
@@ -328,8 +350,7 @@
 			}
 		
 			Singular.prototype.to_html = function(template) {
-				if( missingJQueryTemplates() ) { throw new Error('jQuery templates must be installed to convert a collection to html') }
-				return $.tmpl( template, this.getData() )
+				return toTemplate( template, this.getData() )
 			}
 		
 		/**
@@ -385,9 +406,8 @@
 			 * @returns String Formatted according to the template passed in.
 			 */
 			Collection.prototype.to_html = function(template) {
-				if( missingJQueryTemplates() ) { throw new Error('jQuery templates must be installed to convert a collection to html') }
 				if( this.size() < 1 ) { throw new RangeError('Empty collection') }
-				return $.tmpl( template, this.getData() )
+				return toTemplate( template, this.getData() )
 			}
 			
 			/**
