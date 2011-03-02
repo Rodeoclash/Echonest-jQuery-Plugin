@@ -31,7 +31,6 @@
 		
 		function toTemplate(template, data) {
 			var engine = getTemplatingEngine();
-			console.log(engine);
 			return engine( template, data );
 		}
 		

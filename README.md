@@ -1,6 +1,6 @@
 jQuery Based EchoNest API Plugin
 ================================
-Access the wonderful <http://www.echonest.com/> API directly from Javascript through a simple yet expressive interface. Requires jQuery. jQuery templates optional but you're going to be creating yourself a lot of work if you don't use it...
+Access the wonderful <http://www.echonest.com/> API directly from Javascript through a simple yet expressive interface. Requires jQuery. jQuery/Underscore templates optional but you're going to be creating yourself a lot of work if you don't use it...
 
 Introduction
 ------------
