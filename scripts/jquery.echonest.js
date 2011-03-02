@@ -105,6 +105,7 @@
 					dataType: 'jsonp',
 					type: options.type,
 					data: data,
+					cache: true,
 					success: function(data, textStatus, XMLHttpRequest) {
 						if (options.success) { options.success(new Response(data)) }
 					}
