@@ -4,6 +4,7 @@
 	 * Root class. This can be invoked multiple times if you want to connect to the API with different options / keys.
 	 */
 	function EchoNest(apiKey, options) {
+		var that = this;
 		
 		function hasJQueryTemplates() {
 			return (typeof $ === "function" && typeof $.tmpl === "function");
@@ -17,21 +18,50 @@
 			return (s%(parseInt(s)/Number(s)))===0;
 		}
 		
-		function getTemplatingEngine() {
-			var engine;
+		// Determines the templating engine and memoizes the function used to find it.
+		that.getTemplatingEngine = function() {
+			var name, engine;
 			if( hasJQueryTemplates() ) {
+				name = "jQuery";
 				engine = $.tmpl;
 			} else if( hasUnderscoreTemplates() ) {
+				name = "Underscore";
 				engine = _.template;
 			} else {
 				throw new Error('Either the jQuery template or Underscore template engines must be installed to convert a collection to html')
 			}
-			return engine;
+			that.getTemplatingEngine = {
+				name: name,
+				engine: engine
+			}
+			return that.getTemplatingEngine;
 		}
 		
-		function toTemplate(template, data) {
-			var engine = getTemplatingEngine();
-			return engine( template, data );
+		// TODO: This should use proxy objects, implement once more templating engines are implemented
+		function toTemplate(template, data, options) {
+			var engineDetails = that.getTemplatingEngine(), html;
+			
+			options = $.extend({},{start: 0}, options);
+			if( options.end ) {
+				data = data.slice(options.start, options.end);
+			} else {
+				data = data.slice(options.start);
+			}
+			
+			if( engineDetails.name === "jQuery" ) {
+				html = engineDetails.engine( template, data );
+			} else if ( engineDetails.name === "Underscore" ) {
+
+				// underscore templates don't support arrays, we must manually loop over the array and construct html
+				$.each(data, function(count, item) {
+					html += engineDetails.engine( template, item );
+				});
+				
+			} else {
+				throw new Error('Could not determine engine type.');
+			}
+			
+			return html;
 		}
 		
 		// used to flatten nested json and preserve structure via keyname, this allows easy access to nested JSON values in jQuery templates
@@ -170,7 +200,7 @@
 			}
 			
 			/**
-			 * Get all biographies associated with this artist.
+			 * Get all blogs associated with this artist.
 			 * @returns A collection object.
 			 */
 			Artist.prototype.blogs = function(callback, options) {
@@ -348,8 +378,8 @@
 				return this.data[this.name]
 			}
 		
-			Singular.prototype.to_html = function(template) {
-				return toTemplate( template, this.getData() )
+			Singular.prototype.to_html = function(template, options) {
+				return toTemplate( template, this.getData(), options )
 			}
 		
 		/**
@@ -404,9 +434,9 @@
 			 * Used to interact with a collection of images
 			 * @returns String Formatted according to the template passed in.
 			 */
-			Collection.prototype.to_html = function(template) {
+			Collection.prototype.to_html = function(template, options) {
 				if( this.size() < 1 ) { throw new RangeError('Empty collection') }
-				return toTemplate( template, this.getData() )
+				return toTemplate( template, this.getData(), options )
 			}
 			
 			/**
