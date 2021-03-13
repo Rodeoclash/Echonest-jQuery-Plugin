@@ -1,6 +1,6 @@
 jQuery Based EchoNest API Plugin
 ================================
-Access the wonderful <http://www.echonest.com/> API directly from Javascript through a simple yet expressive interface. Requires jQuery. jQuery/Underscore templates optional but you're going to be creating yourself a lot of work if you don't use it...
+Access the wonderful <http://www.echonest.com/> API directly from Javascript through a simple fluent interface. Requires jQuery. jQuery/Underscore templates optional but you're going to be creating yourself a lot of work if you don't use it...
 
 Introduction
 ------------
@@ -28,8 +28,6 @@ Audio too!
 	echonest.artist("Hybrid").audio( function(audioCollection) {
 		$("body").append( audioCollection.to_html('<p>${artist} - ${length} long<br /><audio src="${url}" controls preload="none"></audio></p>') );
 	});
-
-We can output audio directly into the browser using the HTML5 audio tag! Sexy!
 
 Collections
 -----------
